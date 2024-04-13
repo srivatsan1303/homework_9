@@ -1,7 +1,7 @@
 import logging.config
 import os
 import base64
-import jose
+from jose import jwt
 from typing import List
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -45,7 +45,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     # Encode the data to create the JWT.
-    encoded_jwt = jose.jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 def validate_and_sanitize_url(url_str):
