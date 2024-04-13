@@ -41,7 +41,7 @@ jobs:
   build-and-push-docker:
     needs: test
     runs-on: ubuntu-latest
-    environment: production
+    environment: vatsan # Specifies the environment to use
     steps:
       - uses: actions/checkout@v4
       
@@ -60,7 +60,7 @@ jobs:
           push: true
           tags: srivatsan1303/homework_9:${{ github.sha }} # Uses the Git SHA for tagging
           platforms: linux/amd64,linux/arm64 # Multi-platform support
-          cache-from: type=registry,ref=kaw393939/devops_demo:cache
+          cache-from: type=registry,ref=srivatsan1303/homework_9:cache
           cache-to: type=inline,mode=max
           
       - name: Scan the Docker image
