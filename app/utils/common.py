@@ -1,9 +1,9 @@
 import logging.config
 import os
 import base64
+import jose
 from typing import List
 from dotenv import load_dotenv
-from jose import jwt
 from datetime import datetime, timedelta
 from app.config import ADMIN_PASSWORD, ADMIN_USER, ALGORITHM, SECRET_KEY
 import validators  # Make sure to install this package
@@ -45,7 +45,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     # Encode the data to create the JWT.
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jose.jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 def validate_and_sanitize_url(url_str):
@@ -66,7 +66,7 @@ def encode_url_to_filename(url):
     Encodes a URL into a base64 string safe for filenames, after validating and sanitizing.
     Removes padding to ensure filename compatibility.
     """
-    sanitizd_url = validate_and_sanitize_url(str(url))
+    sanitized_url = validate_and_sanitize_url(str(url))
     if sanitized_url is None:
         raise ValueError("Provided URL is invalid and cannot be encoded.")
     encoded_bytes = base64.urlsafe_b64encode(sanitized_url.encode('utf-8'))
@@ -81,7 +81,7 @@ def decode_filename_to_url(encoded_str: str) -> str:
     padding_needed = 4 - (len(encoded_str) % 4)
     if padding_needed:
         encoded_str += "=" * padding_needed
-    decoded_bytes = base64.urlsafe_b6decode(encoded_str)
+    decoded_bytes = base64.urlsafe_b64decode(encoded_str)
     return decoded_bytes.decode('utf-8')
 
 def generate_links(action: str, qr_filename: str, base_api_url: str, download_url: str) -> List[dict]:
